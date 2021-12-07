@@ -193,3 +193,15 @@ def ResNet34(num_class=10):
 def ResNet50(num_class=10):
     model = ResNet(Bottleneck, [3, 4, 6, 3], num_class)
     return model
+
+
+def SplitResNet18(num_class=10):
+    return ClientResNet(BasicBlock, [2, 2, 2, 2], num_class), ServerResNet(
+        BasicBlock, [2, 2, 2, 2], num_class
+    )
+
+
+def SplitResNet50(num_class=10):
+    return ClientResNet(Bottleneck, [3, 4, 6, 3], num_class), ServerResNet(
+        Bottleneck, [3, 4, 6, 3], num_class
+    )
