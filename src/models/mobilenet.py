@@ -38,7 +38,8 @@ class MobileNet(nn.Module):
         super(MobileNet, self).__init__()
 
         layers = []
-        layers.append(conv_bw(3, 32, 3, 1))
+        self.layer1 = nn.Seqential(conv_bw(3, 32, 3, 1))
+
         layers.append(conv_dw(32, 64, 1))
         layers.append(conv_dw(64, 128, 2))
         layers.append(conv_dw(128, 128, 1))
@@ -57,8 +58,29 @@ class MobileNet(nn.Module):
         self.feature = nn.Sequential(*layers)
 
     def forward(self, x):
-        out = self.feature(x)
+        out = self.layer1(x)
+        # --------------- cut
+        out = self.feature(out)
         out = out.mean(3).mean(2)
         out = out.view(-1, 1024)
         out = self.classifer(out)
         return out
+
+
+class ClientMobileNet(MobileNet):
+    def forward(self, x):
+        out = self.layer1(x)
+        return out
+
+
+class ServerMobileNet(MobileNet):
+    def forward(self, x):
+        x = self.feature(x)
+        x = x.mean(3).mean(2)
+        x = x.view(-1, 1024)
+        out = self.classifer(x)
+        return out
+
+
+def SplitMobileNet(num_class=10):
+    return ClientMobileNet(num_class), ServerMobileNet(num_class)

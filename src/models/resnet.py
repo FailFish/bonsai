@@ -177,9 +177,9 @@ class ServerResNet(ResNet):
         if self.cutLvl <= 4:
             x = self.avgpool(x)
 
-        px = x.view(x.size(0), -1)
-        x = self.fc(px)
-        return px, x
+        x = x.view(x.size(0), -1)
+        x = self.fc(x)
+        return x
 
 
 def ResNet18(num_class=10):
