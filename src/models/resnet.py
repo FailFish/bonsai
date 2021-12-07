@@ -83,8 +83,10 @@ class Bottleneck(nn.Module):
 
 
 class ResNet(nn.Module):
-    def __init__(self, block, layers, num_class=10):
+    def __init__(self, block, layers, num_class=10, cutLvl=-1):
         super(ResNet, self).__init__()
+
+        self.cutLvl = cutLvl
 
         self.inplanes = 64
 
@@ -125,6 +127,59 @@ class ResNet(nn.Module):
         x = x.view(x.size(0), -1)
         x = self.fc(x)
         return x
+
+
+class ClientResNet(ResNet):
+    def forward(self, x):
+        x = self.conv1(x)
+        x = self.bn1(x)
+        x = self.relu(x)
+        if self.cutLvl == 0:
+            return x
+
+        x = self.layer1(x)
+        if self.cutLvl == 1:
+            return x
+
+        x = self.layer2(x)
+        if self.cutLvl == 2:
+            return x
+
+        x = self.layer3(x)
+        if self.cutLvl == 3:
+            return x
+
+        x = self.layer4(x)
+        if self.cutLvl == 4:
+            return x
+
+        x = self.avgpool(x)
+
+        return x
+
+
+class ServerResNet(ResNet):
+    def forward(self, x):
+
+        # fall through
+        if self.cutLvl <= 0:
+            x = self.layer1(x)
+
+        if self.cutLvl <= 1:
+            x = self.layer2(x)
+
+        if self.cutLvl <= 2:
+            x = self.layer3(x)
+
+        if self.cutLvl <= 3:
+            x = self.layer4(x)
+
+        if self.cutLvl <= 4:
+            x = self.avgpool(x)
+
+        px = x.view(x.size(0), -1)
+        x = self.fc(px)
+        return px, x
 
 
 def ResNet18(num_class=10):
