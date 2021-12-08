@@ -43,6 +43,11 @@ class User:
         self.host = host
         self.port = port
 
+
+class Client(User):
+    def __init__(self, host, port):
+        super(Client, self).__init__(host, port)
+
     # connect to server
     def connect(self):
         self.sock.connect((self.host, self.port))
@@ -55,12 +60,13 @@ class User:
     def recv(self):
         return recv_msg(self.sock)
 
-    def training_prep(self):
-        epoch = self.recv()
+    def training_prep(self, total_batch):
+        epochs = self.recv()
         # TODO: set up client dataloader
         msg = total_batch
-        send(msg)
-        # incomplete
+        self.send(msg)
+
+        return epochs
 
 
 class Server(User):
@@ -73,6 +79,7 @@ class Server(User):
         self.sendlog = [[] for _ in range(nclient)]
         self.recvlog = [[] for _ in range(nclient)]
         self.batchsizes = []
+        self.epochs = 0
 
     def accept_clients(self):
         for _ in range(self.nclient):
