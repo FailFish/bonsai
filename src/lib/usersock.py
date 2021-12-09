@@ -86,6 +86,7 @@ class Server(User):
             csock, addr = self.sock.accept()
             print("Conected with", addr)
             self.clients.append(csock)
+        return self.clients
 
     def training_prep(self, epochs):
         self.epochs = epochs
