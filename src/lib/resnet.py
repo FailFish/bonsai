@@ -83,7 +83,7 @@ class Bottleneck(nn.Module):
 
 
 class ResNet(nn.Module):
-    def __init__(self, block, layers, num_class=10, cutLvl=-1):
+    def __init__(self, block, layers, num_class=10, cutLvl=0):
         super(ResNet, self).__init__()
 
         self.cutLvl = cutLvl
@@ -116,6 +116,7 @@ class ResNet(nn.Module):
         x = self.conv1(x)
         x = self.bn1(x)
         x = self.relu(x)
+        x = self.maxpool(x)
 
         x = self.layer1(x)
         x = self.layer2(x)
@@ -134,6 +135,7 @@ class ClientResNet(ResNet):
         x = self.conv1(x)
         x = self.bn1(x)
         x = self.relu(x)
+        x = self.maxpool(x)
         if self.cutLvl == 0:
             return x
 
