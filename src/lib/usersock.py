@@ -61,7 +61,7 @@ class Client(User):
         return recv_msg(self.sock)
 
     def training_prep(self, total_batch):
-        epochs = self.recv()
+        epochs, _ = self.recv()
         # TODO: set up client dataloader
         msg = total_batch
         self.send(msg)
@@ -99,7 +99,8 @@ class Server(User):
             # step 2: collect batchsize, which is len(dataloader).
             batchsize, dlen = recv_msg(csock)
             self.batchsizes.append(batchsize)
-            self.recvlog[i].append(dlen)
+
+        return self.batchsizes
 
     def get_transmission_log(self):
         return self.sendlog, self.recvlog

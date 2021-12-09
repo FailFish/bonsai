@@ -38,7 +38,7 @@ class MobileNet(nn.Module):
         super(MobileNet, self).__init__()
 
         layers = []
-        self.layer1 = nn.Seqential(conv_bw(3, 32, 3, 1))
+        self.layer1 = nn.Sequential(conv_bw(3, 32, 3, 1))
 
         layers.append(conv_dw(32, 64, 1))
         layers.append(conv_dw(64, 128, 2))
