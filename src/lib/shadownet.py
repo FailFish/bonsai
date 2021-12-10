@@ -35,10 +35,12 @@ class ShadowMobileNet(MobileNet):
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         x = self.layer1(x)
-        x = self.midlayer(x)
-        x = self.feature(x)
-        x = self.classifier(x)
-        return torch.flatten(x, 1)
+        out = self.midlayer(x)
+        out = self.feature(out)
+        out = out.mean(3).mean(2)
+        out = out.view(-1, 1024)
+        out = self.classifer(out)
+        return out
 
     def load_front_model(self, client_model):
         self.layer1.load_state_dict(client_model.layer1.state_dict())
