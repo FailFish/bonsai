@@ -36,7 +36,7 @@ class ShadowMobileNet(MobileNet):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         x = self.layer1(x)
         x = self.midlayer(x)
-        x = self.features(x)
+        x = self.feature(x)
         x = self.classifier(x)
         return torch.flatten(x, 1)
 
